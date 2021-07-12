@@ -1,0 +1,72 @@
+#!/usr/bin/env python
+import sys
+import os
+from os.path import expanduser
+import shutil
+import pprint
+
+home = expanduser("~")
+
+args = sys.argv
+
+def create():
+    file_name = args[2]
+    # ファイルを読み込んで
+    with open(file_name , mode="r") as f:
+        s = f.read() 
+
+    # 登録するコマンド名を入力
+    cmd_name = input("New command name ->")
+    flag = os.path.exists(home+"/.pycmd-scripts/"+cmd_name) or shutil.which(cmd_name)
+
+    while flag:
+        cmd_name = input("Same command name exists!!\nNew command name ->")
+        flag = os.path.exists(home+"/.pycmd-scripts/"+cmd_name) or shutil.which(cmd_name)
+
+    # コマンドのメモ
+    cmd_des = input("Command description ->")
+    cmd_des =   '# Command description : {} \n'.format(cmd_des.replace("\n"," "))
+    # 文字列結合
+    s = "#!/usr/bin/env python\n"+cmd_des+s
+    
+    # ファイル書き込み
+    save_name = home+"/.pycmd-scripts/"+cmd_name    
+    with open(save_name, mode='a') as f:
+        f.write(s)
+    os.chmod(save_name, 0o755)
+
+def ls():
+    files = os.listdir(home+"/.pycmd-scripts/")
+    l =[]
+    for i in files:
+        with open(home+"/.pycmd-scripts/"+i , mode="r") as f:
+            s = f.read() 
+        description = s.split("\n")[1].split("# Command description : ")[1]
+        #print(i, description)
+        l.append({"Command name":i, "Description":description})
+    pprint.pprint(l)
+
+def delete():
+    cmd_name = args[2]
+    files = os.listdir(home+"/.pycmd-scripts/")
+    if cmd_name in files:
+        os.remove(home+"/.pycmd-scripts/"+cmd_name)
+    else :
+        print("pycmd: command not found: {} ".format(cmd_name))
+
+second_args = args[1]
+
+if second_args=="create":
+    create()
+elif second_args=="ls":
+    ls()
+elif second_args=="del":
+    delete()
+else :
+    print("pycmd: option not found")
+
+
+
+
+
+

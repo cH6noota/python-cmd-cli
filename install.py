@@ -6,7 +6,7 @@ home = expanduser("~")
 
 # .zshrcにpycmdのパス追加
 with open(home+"/.zshrc", mode='a') as f:
-    path_str = 'export PATH="$HOME/.pycmd-scripts:$PATH"'
+    path_str = 'export PATH="$HOME/.pycmd-scripts:$PATH"\nexport PATH="$HOME:$PATH"'
     f.write("# Python Custom Command File\n"+path_str+"\n")
 
 # script保存用のフォルダを作成

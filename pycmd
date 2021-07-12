@@ -54,7 +54,11 @@ def delete():
     else :
         print("pycmd: command not found: {} ".format(cmd_name))
 
-second_args = args[1]
+try:
+    second_args = args[1]
+except:
+    print("pycmd: args not found")
+    sys.exit()
 
 if second_args=="create":
     create()

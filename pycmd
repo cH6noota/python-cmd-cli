@@ -36,7 +36,7 @@ def create():
     os.chmod(save_name, 0o755)
 
 def ls():
-    files = os.listdir(home+"/.pycmd-scripts/")
+    files = [filename for filename in os.listdir(home+"/.pycmd-scripts/") if not filename.startswith('.')]
     l =[]
     for i in files:
         with open(home+"/.pycmd-scripts/"+i , mode="r") as f:

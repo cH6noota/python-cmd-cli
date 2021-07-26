@@ -33,7 +33,23 @@ def create():
     save_name = home+"/.pycmd-scripts/"+cmd_name    
     with open(save_name, mode='a') as f:
         f.write(s)
-    os.chmod(save_name, 0o755)
+    if os.name == 'posix':
+        os.chmod(save_name, 0o755)
+    else:
+        save_name_win = home+"/.pycmd-scripts/" + cmd_name + ".bat"
+        s = "@echo off\n"
+        s = s + "\n"
+        s = s + "SET app=%0\n"
+        s = s + "SET lib=%~dp0\n"
+        s = s + ""
+        s = s + "python \"%lib%" + cmd_name + "\" %*\n"
+        s = s + "\n"
+        s = s + "echo.\n"
+        s = s + "\n"
+        s = s + "exit /B %ERRORLEVEL%"
+
+        with open(save_name_win, mode='a') as f:
+            f.write(s)
 
 def ls():
     files = [filename for filename in os.listdir(home+"/.pycmd-scripts/") if not filename.startswith('.')]
@@ -48,11 +64,13 @@ def ls():
 
 def delete():
     cmd_name = args[2]
-    files = os.listdir(home+"/.pycmd-scripts/")
+    files = os.listdir(home + "/.pycmd-scripts/")
     if cmd_name in files:
-        os.remove(home+"/.pycmd-scripts/"+cmd_name)
+        os.remove(home + "/.pycmd-scripts/" + cmd_name)
+        if os.name == 'nt':
+            os.remove(home+"/.pycmd-scripts/" + cmd_name + ".bat")
     else :
-        print("pycmd: command not found: {} ".format(cmd_name))
+        print("pycmd: command not found: {} " . format(cmd_name))
 
 try:
     second_args = args[1]
@@ -68,9 +86,3 @@ elif second_args=="del":
     delete()
 else :
     print("pycmd: option not found")
-
-
-
-
-
-
